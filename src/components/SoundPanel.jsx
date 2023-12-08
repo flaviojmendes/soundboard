@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { sounds } from "../soundMap";
+import { files } from "../soundMap";
 // import SoundBox from "./SoundBox";
 import NewSoundBox from "./NewSoundBox";
 import media from "styled-media-query";
@@ -25,7 +25,7 @@ const SearchBox = styled.div`
   display: flex;
   width: 50rem;
   height: 4rem;
-  ${media.lessThan('900px')`
+  ${media.lessThan("900px")`
     width: 50%;  
   `}
   justify-content: center;
@@ -34,24 +34,23 @@ const SearchInput = styled.input`
   display: flex;
   width: 80%;
   font-size: 1.5rem;
-  padding: .3rem;
+  padding: 0.3rem;
   border: 2px solid #363636;
   border-radius: 4px;
 `;
 
 const SoundPanel = () => {
-  
   const [searchTerm, setSearchTerm] = React.useState("");
   const [searchResults, setSearchResults] = React.useState([]);
   const [favorites, setFavorite] = React.useState([]);
 
   const AddFavorite = (sound) => {
     let newFavorites = favorites;
-    newFavorites.push(sound)
-    setFavorite(newFavorites)
+    newFavorites.push(sound);
+    setFavorite(newFavorites);
 
-    console.log('favorites', favorites)
-  }
+    console.log("favorites", favorites);
+  };
 
   const RemoveFavorite = (sound) => {
     let newFavorites = favorites;
@@ -61,30 +60,22 @@ const SoundPanel = () => {
       newFavorites.splice(index, 1);
       index = newFavorites.indexOf(sound);
     }
-    setFavorite(newFavorites)
+    setFavorite(newFavorites);
 
-    console.log('favorites', favorites)
-  }
-
-
+    console.log("favorites", favorites);
+  };
 
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
   React.useEffect(() => {
-    const resultSounds = sounds.filter((sound) =>
-      sound.name.toLowerCase().includes(searchTerm.toLowerCase()) ||  sound.file.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setSearchResults(resultSounds);
-
-    // favorites.map( (favorite)=> {
-    //   let newArray = searchResults;
-    //   var index = newArray.indexOf(favorite);
-    //   newArray.unshift(newArray.splice(index, 1)[0]);
-    //   setSearchResults(newArray)
-    // })
-
+    (async () => {
+      const resultSounds = files.filter((file) =>
+        file.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSearchResults(resultSounds);
+    })();
   }, [searchTerm]);
 
   return (
@@ -98,18 +89,24 @@ const SoundPanel = () => {
             onChange={handleChange}
           />
         </SearchBox>
-        {
-          searchResults.length !== 0 && searchTerm !== "" && 
+        {searchResults.length !== 0 && searchTerm !== "" && (
           <Container>
             {searchResults.map((sound) => {
-              return <NewSoundBox soundName={sound} addFavorite={AddFavorite} removeFavorite={RemoveFavorite}/>;
+              return (
+                <NewSoundBox
+                  key={sound}
+                  soundName={sound}
+                  addFavorite={AddFavorite}
+                  removeFavorite={RemoveFavorite}
+                />
+              );
             })}
           </Container>
-        }
+        )}
         <Container>
-            {sounds.map((sound) => {
-              return <NewSoundBox soundName={sound}/>;
-            })}
+          {files.map((sound) => {
+            return <NewSoundBox key={Math.random()} soundName={sound} />;
+          })}
         </Container>
       </MainContainer>
     </>

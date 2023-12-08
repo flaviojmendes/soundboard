@@ -90,7 +90,7 @@ const Name = styled.p`
 `;
 
 const SoundBox = (props) => {
-  const soundPath = "/sounds/" + props.soundName.file;
+  const soundPath = "/sounds/" + props.soundName;
 
   const [volume, setVolume] = useState(1);
   

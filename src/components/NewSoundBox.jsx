@@ -1,12 +1,12 @@
-import React from 'react'
-import ReactHowler from 'react-howler'
+import React from "react";
+import ReactHowler from "react-howler";
 import styled from "styled-components";
 
-import {PauseCircle} from "@styled-icons/boxicons-regular/PauseCircle"
-import {PlayCircle} from "@styled-icons/boxicons-regular/PlayCircle"
-import {StopCircle} from "@styled-icons/boxicons-regular/StopCircle"
+import { PauseCircle } from "@styled-icons/boxicons-regular/PauseCircle";
+import { PlayCircle } from "@styled-icons/boxicons-regular/PlayCircle";
+import { StopCircle } from "@styled-icons/boxicons-regular/StopCircle";
 
-import raf from 'raf' // requestAnimationFrame polyfill
+import raf from "raf"; // requestAnimationFrame polyfill
 // import button from '../components/button'
 
 const Container = styled.div`
@@ -16,16 +16,16 @@ const Container = styled.div`
   /* height: 12rem; */
   width: 10rem;
   border-radius: 5px;
-  background-color: #211F1C;
+  background-color: #211f1c;
   margin-bottom: 2rem;
-	margin-right: 1rem;
-	align-items: center;
+  margin-right: 1rem;
+  align-items: center;
   text-align: center;
   justify-content: space-evenly;
 
-  /* border: ${props=> props.isPlaying ? "solid 5px #D5A021" : "none"}; */
-  box-shadow: ${props=> props.isPlaying ? "5px 5px #D5A021" : "none"};
-  transition: box-shadow ease-in-out .5s;
+  /* border: ${(props) => (props.isPlaying ? "solid 5px #D5A021" : "none")}; */
+  box-shadow: ${(props) => (props.isPlaying ? "5px 5px #D5A021" : "none")};
+  transition: box-shadow ease-in-out 0.5s;
 `;
 
 const ButtonsContainer = styled.div`
@@ -37,23 +37,22 @@ const PlayButton = styled(PlayCircle)`
   height: 3rem;
   width: 3rem;
   cursor: pointer;
-  color: ${props => props.isPlaying ? "#5397d4" : "#65e688"};
-  transition: color .3s ease-in;
+  color: ${(props) => (props.isPlaying ? "#5397d4" : "#65e688")};
+  transition: color 0.3s ease-in;
 `;
 
 const PauseButton = styled(PauseCircle)`
   height: 3rem;
   width: 3rem;
   cursor: pointer;
-  color: ${props => props.isPlaying ? "#5397d4" : "#65e688"};
-  transition: color .3s ease-in;
+  color: ${(props) => (props.isPlaying ? "#5397d4" : "#65e688")};
+  transition: color 0.3s ease-in;
 `;
 
-
 const Label = styled.p`
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-family: Arial, Helvetica, sans-serif;
-  color: #EDE7D9;
+  color: #ede7d9;
 `;
 
 const StopButton = styled(StopCircle)`
@@ -64,25 +63,24 @@ const StopButton = styled(StopCircle)`
 `;
 
 const VolumeInput = styled.input`
-	color: blue;
-`
+  color: blue;
+`;
 
 const NameContainer = styled.div`
   display: flex;
   height: 5rem;
   align-items: flex-start;
-`
+`;
 
 const Name = styled.p`
   font-size: 1.3rem;
   font-family: Arial, Helvetica, sans-serif;
-  color: #EDE7D9;
+  color: #ede7d9;
 `;
 
-
 class NewSoundBox extends React.Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
 
     this.state = {
       playing: false,
@@ -91,102 +89,102 @@ class NewSoundBox extends React.Component {
       mute: false,
       volume: 0.5,
       seek: 0.0,
-      isSeeking: false
-    }
-    this.handleToggle = this.handleToggle.bind(this)
-    this.handleOnLoad = this.handleOnLoad.bind(this)
-    this.handleOnEnd = this.handleOnEnd.bind(this)
-    this.handleOnPlay = this.handleOnPlay.bind(this)
-    this.handleStop = this.handleStop.bind(this)
-    this.renderSeekPos = this.renderSeekPos.bind(this)
-    this.handleMouseDownSeek = this.handleMouseDownSeek.bind(this)
-    this.handleMouseUpSeek = this.handleMouseUpSeek.bind(this)
-    this.handleSeekingChange = this.handleSeekingChange.bind(this)
+      isSeeking: false,
+    };
+    this.handleToggle = this.handleToggle.bind(this);
+    this.handleOnLoad = this.handleOnLoad.bind(this);
+    this.handleOnEnd = this.handleOnEnd.bind(this);
+    this.handleOnPlay = this.handleOnPlay.bind(this);
+    this.handleStop = this.handleStop.bind(this);
+    this.renderSeekPos = this.renderSeekPos.bind(this);
+    this.handleMouseDownSeek = this.handleMouseDownSeek.bind(this);
+    this.handleMouseUpSeek = this.handleMouseUpSeek.bind(this);
+    this.handleSeekingChange = this.handleSeekingChange.bind(this);
   }
 
-  componentWillUnmount () {
-    this.clearRAF()
+  componentWillUnmount() {
+    this.clearRAF();
   }
 
-  handleToggle () {
+  handleToggle() {
     this.setState({
-      playing: !this.state.playing
-    })
+      playing: !this.state.playing,
+    });
   }
 
-  handleOnLoad () {
-		if (!this.player) return null;
+  handleOnLoad() {
+    if (!this.player) return null;
     this.setState({
       loaded: true,
-      duration: this.player.duration()
-    })
+      duration: this.player.duration(),
+    });
   }
 
-  handleOnPlay () {
+  handleOnPlay() {
     this.setState({
-      playing: true
-    })
-    this.renderSeekPos()
+      playing: true,
+    });
+    this.renderSeekPos();
   }
 
-  handleOnEnd () {
+  handleOnEnd() {
     this.setState({
-      playing: false
-    })
-    this.clearRAF()
+      playing: false,
+    });
+    this.clearRAF();
   }
 
-  handleStop () {
-    this.player.stop()
+  handleStop() {
+    this.player.stop();
     this.setState({
-      playing: false
-    })
-    this.renderSeekPos()
+      playing: false,
+    });
+    this.renderSeekPos();
   }
 
-  handleMouseDownSeek () {
+  handleMouseDownSeek() {
     this.setState({
-      isSeeking: true
-    })
+      isSeeking: true,
+    });
   }
 
-  handleMouseUpSeek (e) {
+  handleMouseUpSeek(e) {
     this.setState({
-      isSeeking: false
-    })
+      isSeeking: false,
+    });
 
-    this.player.seek(e.target.value)
+    this.player.seek(e.target.value);
   }
 
-  handleSeekingChange (e) {
+  handleSeekingChange(e) {
     this.setState({
-      seek: parseFloat(e.target.value)
-    })
+      seek: parseFloat(e.target.value),
+    });
   }
 
-  renderSeekPos () {
+  renderSeekPos() {
     if (!this.state.isSeeking) {
       this.setState({
-        seek: this.player.seek()
-      })
+        seek: this.player.seek(),
+      });
     }
     if (this.state.playing) {
-      this._raf = raf(this.renderSeekPos)
+      this._raf = raf(this.renderSeekPos);
     }
   }
 
-  clearRAF () {
-    raf.cancel(this._raf)
+  clearRAF() {
+    raf.cancel(this._raf);
   }
 
-  render () {
+  render() {
     return (
       <Container isPlaying={this.state.playing}>
-				<NameContainer>
-          <Name>{this.props.soundName.name}</Name>
+        <NameContainer>
+          <Name>{this.props.soundName?.replace(".mp3", "")}</Name>
         </NameContainer>
         <ReactHowler
-          src={"/sounds/" + this.props.soundName.file}
+          src={"/sounds/" + this.props.soundName}
           playing={this.state.playing}
           onLoad={this.handleOnLoad}
           onPlay={this.handleOnPlay}
@@ -202,29 +200,38 @@ class NewSoundBox extends React.Component {
             Volume
             <span>
               <VolumeInput
-                type='range'
-                min='0'
-                max='1'
-                step='.05'
+                type="range"
+                min="0"
+                max="1"
+                step=".05"
                 value={this.state.volume}
-                onChange={e => this.setState({ volume: parseFloat(e.target.value) })}
+                onChange={(e) =>
+                  this.setState({ volume: parseFloat(e.target.value) })
+                }
               />
             </span>
           </Label>
         </div>
-				<ButtonsContainer>
-					{this.state.playing ? <PauseButton isPlaying={this.state.playing} onClick={this.handleToggle} /> : <PlayButton onClick={this.handleToggle}/>}
-					<StopButton onClick={this.handleStop}/>
-				</ButtonsContainer>
+        <ButtonsContainer>
+          {this.state.playing ? (
+            <PauseButton
+              isPlaying={this.state.playing}
+              onClick={this.handleToggle}
+            />
+          ) : (
+            <PlayButton onClick={this.handleToggle} />
+          )}
+          <StopButton onClick={this.handleStop} />
+        </ButtonsContainer>
         <div>
           <Label>
             Seek
             <span>
               <input
-                type='range'
-                min='0'
+                type="range"
+                min="0"
                 max={this.state.duration ? this.state.duration.toFixed(2) : 0}
-                step='.01'
+                step=".01"
                 value={this.state.seek}
                 onChange={this.handleSeekingChange}
                 onMouseDown={this.handleMouseDownSeek}
@@ -233,9 +240,10 @@ class NewSoundBox extends React.Component {
             </span>
           </Label>
         </div>
+        
       </Container>
-    )
+    );
   }
 }
 
-export default NewSoundBox
+export default NewSoundBox;
